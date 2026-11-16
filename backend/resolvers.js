@@ -5,6 +5,7 @@ const { randomUUID } = require("crypto");
 const {
   createUser,
   findUserByEmail,
+  findUserById
 } = require("./users");
 
 const resolvers = {
@@ -12,7 +13,32 @@ const resolvers = {
     health: () => "GraphQL API funcionando!",
 
     me: (_, __, { req }) => {
-      return null;
+      const token = req.cookies.token;
+
+      if (!token) {
+        return null;
+      }
+
+      try {
+        const decoded = jwt.verify(
+          token,
+          process.env.JWT_SECRET
+        );
+
+        const user = findUserById(decoded.userId);
+
+        if (!user) {
+          return null;
+        }
+
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email
+        };
+      } catch {
+        return null;
+      }
     }
   },
 

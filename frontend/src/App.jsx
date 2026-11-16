@@ -1,24 +1,40 @@
-import {gql} from "@apollo/client";
+
+import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 
-
-const HEALTH_QUERY = gql`
+const ME_QUERY = gql`
   query {
-    health
+    me {
+      id
+      name
+      email
+    }
   }
 `;
 
 function App() {
-  const {loading, error, data} = useQuery(HEALTH_QUERY);
+  const { loading, error, data } = useQuery(ME_QUERY);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loading) {
+    return <p>Verificando autenticação...</p>;
+  }
+
+  if (error) {
+    return <p>Erro: {error.message}</p>;
+  }
+
+  if (!data.me) {
+    return <p>Nenhum usuário autenticado.</p>;
+  }
 
   return (
-    <div>
-      <h1>GraphQL Health Check</h1>
-      <p>Status: {data.health}</p>
-    </div>
+    <main>
+      <h1>Auth GraphQL Lab</h1>
+      <h2>Usuário autenticado</h2>
+      <p>Nome: {data.me.name}</p>
+      <p>E-mail: {data.me.email}</p>
+      <p>ID: {data.me.id}</p>
+    </main>
   );
 }
 
