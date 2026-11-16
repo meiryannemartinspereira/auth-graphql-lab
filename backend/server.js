@@ -1,6 +1,7 @@
 
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const { ApolloServer } = require("@apollo/server");
 const typeDefs = require("./schema");
 const resolvers = require("./resolvers");
@@ -18,12 +19,25 @@ async function startServer() {
 
   await server.start();
 
-  app.use(cors());
+  app.use(cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true
+  }));
+
   app.use(express.json());
+  app.use(cookieParser());
 
-  app.use("/graphql", expressMiddleware(server));
+  app.use(
+    "/graphql",
+    expressMiddleware(server, {
+      context: async ({ req, res }) => ({
+        req,
+        res
+      })
+    })
+  );
 
-  const PORT = 3000;
+  const PORT = process.env.PORT || 3000;
 
   app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
