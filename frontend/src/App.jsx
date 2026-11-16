@@ -1,6 +1,7 @@
 
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
+import UserProfile from "./components/UserProfile";
 
 const ME_QUERY = gql`
   query {
@@ -30,10 +31,7 @@ function App() {
   return (
     <main>
       <h1>Auth GraphQL Lab</h1>
-      <h2>Usuário autenticado</h2>
-      <p>Nome: {data.me.name}</p>
-      <p>E-mail: {data.me.email}</p>
-      <p>ID: {data.me.id}</p>
+      <UserProfile user={data.me} />
     </main>
   );
 }
