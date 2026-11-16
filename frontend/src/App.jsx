@@ -5,9 +5,10 @@ import { useState } from "react";
 import UserProfile from "./components/UserProfile";
 import UserContext from "./contexts/UserContext";
 import Header from "./components/Header";
+import LoginForm from "./components/LoginForm";
 
 const ME_QUERY = gql`
-  query {
+  query Me {
     me {
       id
       name
@@ -28,26 +29,24 @@ function App() {
     return <p>Erro: {error.message}</p>;
   }
 
-  if (!data.me) {
-    return <p>Nenhum usuário autenticado.</p>;
-  }
-
   return (
     <UserContext.Provider value={data.me}>
       <Header />
+
       <main>
-        <button onClick={() => setShowDetails(!showDetails)}>
-          {showDetails ? "Ocultar perfil" : "Mostrar perfil"}
-        </button>
+        {!data.me ? (
+          <LoginForm />
+        ) : (
+          <>
+            <button onClick={() => setShowDetails(!showDetails)}>
+              {showDetails ? "Ocultar perfil" : "Mostrar perfil"}
+            </button>
 
-        <UserProfile
-          showDetails={showDetails}
-        />
-
+            <UserProfile showDetails={showDetails} />
+          </>
+        )}
       </main>
-
     </UserContext.Provider>
-
   );
 }
 
