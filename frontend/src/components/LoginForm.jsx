@@ -1,52 +1,27 @@
-import { useReducer } from "react";
-import authReducer, { initialState } from "../reducers/authReducer";
-import { gql } from "@apollo/client";
-import { useMutation } from "@apollo/client/react";
-import { useDispatch } from "react-redux";
-import { loginSuccess } from "../features/auth/authSlice";
 
-const LOGIN_MUTATION = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      user {
-        id
-        name
-        email
-      }
-      message
-    }
-  }
-`;
+import { useReducer } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import authReducer, { initialState } from "../reducers/authReducer";
+import { loginUser } from "../features/auth/authThunks";
 
 function LoginForm() {
   const dispatchRedux = useDispatch();
-  const [state, dispatch] = useReducer(authReducer, initialState);
-  const [login] = useMutation(LOGIN_MUTATION);
 
-  async function handleSubmit(event) {
+  const { loading, error } = useSelector(
+    (state) => state.auth
+  );
+
+  const [state, dispatch] = useReducer(authReducer, initialState);
+
+  function handleSubmit(event) {
     event.preventDefault();
 
-    dispatch({ type: "LOGIN_START" });
-
-    try {
-      const response = await login({
-        variables: {
-          email: state.email,
-          password: state.password
-        },
-        refetchQueries: ["Me"],
-        awaitRefetchQueries: true
-      });
-
-      dispatchRedux(loginSuccess(response.data.login.user));
-
-      dispatch({ type: "LOGIN_SUCCESS" });
-    } catch (error) {
-      dispatch({
-        type: "LOGIN_ERROR",
-        payload: error.message
-      });
-    }
+    dispatchRedux(
+      loginUser({
+        email: state.email,
+        password: state.password
+      })
+    );
   }
 
   return (
@@ -77,11 +52,11 @@ function LoginForm() {
         }
       />
 
-      <button type="submit" disabled={state.loading}>
-        {state.loading ? "Entrando..." : "Entrar"}
+      <button type="submit" disabled={loading}>
+        {loading ? "Entrando..." : "Entrar"}
       </button>
 
-      {state.error && <p>{state.error}</p>}
+      {error && <p>{error}</p>}
     </form>
   );
 }
