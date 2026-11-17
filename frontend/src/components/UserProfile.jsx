@@ -1,8 +1,8 @@
-
 import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../features/auth/authSlice";
 
 function UserProfile({ showDetails }) {
-  const user = useSelector((state) => state.auth.user);
+  const user = useSelector(selectCurrentUser);
 
   return (
     <section>
