@@ -41,7 +41,6 @@ async function startServer() {
 
   app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
-    console.log(`GraphQL disponível em http://localhost:${PORT}/graphql`);
   });
 }
 
