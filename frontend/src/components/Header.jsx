@@ -1,8 +1,8 @@
-import { useContext } from "react";
-import UserContext from "../contexts/UserContext";
+
+import { useSelector } from "react-redux";
 
 function Header() {
-  const user = useContext(UserContext);
+  const user = useSelector((state) => state.auth.user);
 
   return (
     <header>

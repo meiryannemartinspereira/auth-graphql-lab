@@ -2,6 +2,8 @@ import { useReducer } from "react";
 import authReducer, { initialState } from "../reducers/authReducer";
 import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../features/auth/authSlice";
 
 const LOGIN_MUTATION = gql`
   mutation Login($email: String!, $password: String!) {
@@ -17,6 +19,7 @@ const LOGIN_MUTATION = gql`
 `;
 
 function LoginForm() {
+  const dispatchRedux = useDispatch();
   const [state, dispatch] = useReducer(authReducer, initialState);
   const [login] = useMutation(LOGIN_MUTATION);
 
@@ -26,7 +29,7 @@ function LoginForm() {
     dispatch({ type: "LOGIN_START" });
 
     try {
-      await login({
+      const response = await login({
         variables: {
           email: state.email,
           password: state.password
@@ -34,6 +37,8 @@ function LoginForm() {
         refetchQueries: ["Me"],
         awaitRefetchQueries: true
       });
+
+      dispatchRedux(loginSuccess(response.data.login.user));
 
       dispatch({ type: "LOGIN_SUCCESS" });
     } catch (error) {

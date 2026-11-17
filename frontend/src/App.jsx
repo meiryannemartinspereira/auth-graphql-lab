@@ -1,25 +1,10 @@
 
-import { gql } from "@apollo/client";
-import { useQuery } from "@apollo/client/react";
-import { useState } from "react";
-import UserProfile from "./components/UserProfile";
-import UserContext from "./contexts/UserContext";
 import Header from "./components/Header";
-import LoginForm from "./components/LoginForm";
-
-const ME_QUERY = gql`
-  query Me {
-    me {
-      id
-      name
-      email
-    }
-  }
-`;
+import AuthPage from "./pages/AuthPage";
+import useAuth from "./features/auth/useAuth";
 
 function App() {
-  const [showDetails, setShowDetails] = useState(true);
-  const { loading, error, data } = useQuery(ME_QUERY);
+  const { user, loading, error, handleLogout } = useAuth();
 
   if (loading) {
     return <p>Verificando autenticação...</p>;
@@ -30,23 +15,10 @@ function App() {
   }
 
   return (
-    <UserContext.Provider value={data.me}>
+    <>
       <Header />
-
-      <main>
-        {!data.me ? (
-          <LoginForm />
-        ) : (
-          <>
-            <button onClick={() => setShowDetails(!showDetails)}>
-              {showDetails ? "Ocultar perfil" : "Mostrar perfil"}
-            </button>
-
-            <UserProfile showDetails={showDetails} />
-          </>
-        )}
-      </main>
-    </UserContext.Provider>
+      <AuthPage user={user} onLogout={handleLogout} />
+    </>
   );
 }
 
