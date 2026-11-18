@@ -13,6 +13,14 @@ function LoginForm() {
 
   const [state, dispatch] = useReducer(authReducer, initialState);
 
+  function handleChange(event) {
+    dispatch({
+      type: "SET_FIELD",
+      field: event.target.name,
+      payload: event.target.value
+    });
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
 
@@ -31,25 +39,17 @@ function LoginForm() {
       <label>E-mail</label>
       <input
         type="email"
+        name="email"
         value={state.email}
-        onChange={(event) =>
-          dispatch({
-            type: "SET_EMAIL",
-            payload: event.target.value
-          })
-        }
+        onChange={handleChange}
       />
 
       <label>Senha</label>
       <input
         type="password"
+        name="password"
         value={state.password}
-        onChange={(event) =>
-          dispatch({
-            type: "SET_PASSWORD",
-            payload: event.target.value
-          })
-        }
+        onChange={handleChange}
       />
 
       <button type="submit" disabled={loading}>

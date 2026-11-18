@@ -16,6 +16,19 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
+const REGISTER_MUTATION = gql`
+  mutation Register($name: String!, $email: String!, $password: String!) {
+    register(name: $name, email: $email, password: $password) {
+      user {
+        id
+        name
+        email
+      }
+      message
+    }
+  }
+`;
+
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (credentials) => {
@@ -27,5 +40,17 @@ export const loginUser = createAsyncThunk(
     });
 
     return response.data.login.user;
+  }
+);
+
+export const registerUser = createAsyncThunk(
+  "auth/registerUser",
+  async (userData) => {
+    const response = await client.mutate({
+      mutation: REGISTER_MUTATION,
+      variables: userData
+    });
+
+    return response.data.register.user;
   }
 );

@@ -1,44 +1,16 @@
-const initialState = {
+
+export const initialState = {
+  name: "",
   email: "",
-  password: "",
-  loading: false,
-  error: null
+  password: ""
 };
 
 function authReducer(state, action) {
   switch (action.type) {
-    case "SET_EMAIL":
+    case "SET_FIELD":
       return {
         ...state,
-        email: action.payload
-      };
-
-    case "SET_PASSWORD":
-      return {
-        ...state,
-        password: action.payload
-      };
-
-    case "LOGIN_START":
-      return {
-        ...state,
-        loading: true,
-        error: null
-      };
-
-    case "LOGIN_SUCCESS":
-      return {
-        ...state,
-        loading: false,
-        password: "",
-        error: null
-      };
-
-    case "LOGIN_ERROR":
-      return {
-        ...state,
-        loading: false,
-        error: action.payload
+        [action.field]: action.payload
       };
 
     case "RESET":
@@ -49,5 +21,4 @@ function authReducer(state, action) {
   }
 }
 
-export { initialState };
 export default authReducer;
